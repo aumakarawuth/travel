@@ -10,6 +10,12 @@ import { Button } from "@/components/ui/button";
 import { CATEGORY_COLOR, CATEGORY_EMOJI } from "@/lib/categories";
 import { formatMoney } from "@/lib/utils";
 import type { Category } from "@/lib/ai/schema";
+import { VoteButtons } from "@/components/explore/vote-buttons";
+import { SelectionControls } from "@/components/explore/selection-controls";
+import { Comments } from "@/components/explore/comments";
+import { RealtimeRefresh } from "@/components/realtime-refresh";
+import { canEditTrip } from "@/lib/permissions";
+import { directionsUrl } from "@/lib/explore";
 
 type Place = {
   id: string; name: string; category: Category; description: string | null; address: string | null; lat: number | null; lng: number | null;
@@ -17,26 +23,36 @@ type Place = {
   price_checked_at: string | null; opening_hours: { weekdayText?: string[] } | null; opening_hours_source: string | null; opening_hours_checked_at: string | null;
   visit_duration_minutes: number | null; images: { url: string; source: string }[];
   place_sources: { id: string; source_type: string; url: string | null; fetched_at: string }[];
+  place_votes: { user_id: string; vote: "want" | "maybe" | "not_interested" }[];
+  trip_place_selections: { status: "proposed" | "shortlisted" | "selected" | "rejected" | "scheduled"; priority: "must_visit" | "high" | "normal" | "optional" }[];
+  place_comments: { id: string; body: string; created_at: string; deleted_at: string | null; user_id: string; author: { display_name: string; color: string; avatar_url: string | null } | null }[];
   place_submissions: { created_at: string; submission: { original_url: string; platform: string } | null; profile: { display_name: string; color: string; avatar_url: string | null } | null }[];
 };
 
 export default async function PlacePage({ params }: { params: Promise<{ tripId: string; placeId: string }> }) {
   const { tripId, placeId } = await params;
   if (!uuidSchema.safeParse(placeId).success) notFound();
-  const { supabase, trip } = await getTripContext(tripId);
+  const { supabase, trip, user, role, members } = await getTripContext(tripId);
   const { t, locale } = await getDict();
   const { data: p } = await supabase.from("places")
-    .select("*,place_sources(id,source_type,url,fetched_at),place_submissions(created_at,submission:link_submissions(original_url,platform),profile:profiles(display_name,color,avatar_url))")
+    .select("*,place_votes(user_id,vote),trip_place_selections(status,priority),place_comments(id,body,created_at,deleted_at,user_id,author:profiles(display_name,color,avatar_url)),place_sources(id,source_type,url,fetched_at),place_submissions(created_at,submission:link_submissions(original_url,platform),profile:profiles(display_name,color,avatar_url))")
     .eq("id", placeId).eq("trip_id", trip.id).maybeSingle<Place>();
   if (!p) notFound();
   const fmt = new Intl.DateTimeFormat(locale === "th" ? "th-TH" : "en-GB", { dateStyle: "medium" });
+  const people = Object.fromEntries(members.map((m) => [m.user_id, { id: m.user_id, name: m.profile?.display_name ?? "?", color: m.color ?? m.profile?.color ?? "#64748b", avatar: m.profile?.avatar_url ?? null }]));
+  const sel = p.trip_place_selections[0] ?? { status: "proposed" as const, priority: "normal" as const };
+  const dir = p.location_verified ? directionsUrl({ lat: p.lat, lng: p.lng, googlePlaceId: p.google_place_id }) : null;
+  const comments = [...p.place_comments].sort((a, b) => a.created_at.localeCompare(b.created_at)).map((c) => ({
+    id: c.id, body: c.body, createdAt: c.created_at, deleted: Boolean(c.deleted_at), mine: c.user_id === user.id,
+    author: { name: c.author?.display_name ?? "?", color: c.author?.color ?? "#64748b", avatar: c.author?.avatar_url ?? null },
+  }));
   const mapsUrl = p.lat !== null && p.lng !== null
     ? `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}${p.google_place_id ? `&query_place_id=${encodeURIComponent(p.google_place_id)}` : ""}`
     : null;
 
   return (
     <div className="mx-auto max-w-2xl space-y-4">
-      <Link href={`/trips/${trip.id}/inbox`} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" />{t.place.back}</Link>
+      <Link href={`/trips/${trip.id}/map`} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" />{t.place.back}</Link>
       {p.images[0] && (
         <figure>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -51,7 +67,15 @@ export default async function PlacePage({ params }: { params: Promise<{ tripId: 
         <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="h-3 w-3" />{p.location_verified ? t.inbox.verified : t.inbox.noLocation}</p>
       </div>
       {p.description && <p className="text-sm">{p.description}</p>}
-      {mapsUrl && <Button asChild variant="secondary"><a href={mapsUrl} target="_blank" rel="noopener noreferrer"><ExternalLink />{t.place.openMaps}</a></Button>}
+      <RealtimeRefresh tripId={trip.id} tables={["place_votes", "place_comments", "trip_place_selections"]} />
+      <div className="flex flex-wrap gap-2">
+        {mapsUrl && <Button asChild variant="secondary"><a href={mapsUrl} target="_blank" rel="noopener noreferrer"><ExternalLink />{t.place.openMaps}</a></Button>}
+        {dir && <Button asChild variant="outline"><a href={dir} target="_blank" rel="noopener noreferrer"><ExternalLink />{t.explore.navigate}</a></Button>}
+      </div>
+      <Card className="space-y-3 p-4">
+        <VoteButtons placeId={p.id} votes={p.place_votes.map((v) => ({ userId: v.user_id, vote: v.vote }))} meId={user.id} people={people} t={t.vote} />
+        <SelectionControls placeId={p.id} status={sel.status} priority={sel.priority} canEdit={canEditTrip(role)} t={{ selection: t.selection, priority: t.priority, errors: t.errors }} />
+      </Card>
 
       <div className="grid gap-3 sm:grid-cols-2">
         {p.estimated_price !== null && (
@@ -81,6 +105,11 @@ export default async function PlacePage({ params }: { params: Promise<{ tripId: 
             </div>
           ))}
         </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader><CardTitle>{t.comments.title} ({comments.filter((c) => !c.deleted).length})</CardTitle></CardHeader>
+        <CardContent><Comments placeId={p.id} comments={comments} locale={locale} t={t.comments} errors={t.errors} /></CardContent>
       </Card>
 
       <Card>

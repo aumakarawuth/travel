@@ -93,6 +93,32 @@ do $$ begin
   raise exception 'FAIL: dup';
 exception when unique_violation then raise notice 'ok - duplicate submission rejected'; end $$;
 
+-- Phase 3: votes / selections / comments
+with x as (insert into places (trip_id, name, name_normalized, created_by)
+  values ((select v from t_ids where k='A'), 'Cafe', 'cafe', auth.uid()) returning id)
+insert into t_ids select 'P', id from x;
+insert into place_votes (trip_id, place_id, user_id, vote) values ((select v from t_ids where k='A'), (select v from t_ids where k='P'), auth.uid(), 'want');
+select pg_temp.expect((select count(*) from place_votes where place_id=(select v from t_ids where k='P'))=1, 'member can vote');
+do $$ begin
+  insert into place_votes (trip_id, place_id, user_id, vote) values ((select v from t_ids where k='A'), (select v from t_ids where k='P'), '00000000-0000-0000-0000-00000000000a', 'want');
+  raise exception 'FAIL: vote as other';
+exception when insufficient_privilege then raise notice 'ok - cannot vote as someone else'; end $$;
+do $$ begin
+  insert into place_votes (trip_id, place_id, user_id, vote) values ((select v from t_ids where k='B'), (select v from t_ids where k='P'), auth.uid(), 'want');
+  raise exception 'FAIL: cross-trip vote';
+exception when insufficient_privilege then raise notice 'ok - cross-trip vote blocked'; end $$;
+do $$ begin
+  insert into trip_place_selections (trip_id, place_id, status) values ((select v from t_ids where k='A'), (select v from t_ids where k='P'), 'selected');
+  raise exception 'FAIL: member selected';
+exception when insufficient_privilege then raise notice 'ok - member cannot change selection'; end $$;
+insert into place_comments (trip_id, place_id, user_id, body) values ((select v from t_ids where k='A'), (select v from t_ids where k='P'), auth.uid(), 'น่าไป');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
+update place_comments set deleted_at = now() where place_id=(select v from t_ids where k='P');
+select pg_temp.expect((select count(*) from place_comments where place_id=(select v from t_ids where k='P') and deleted_at is null)=1, 'cannot delete others comments');
+insert into trip_place_selections (trip_id, place_id, status, priority) values ((select v from t_ids where k='A'), (select v from t_ids where k='P'), 'selected', 'must_visit');
+select pg_temp.expect((select status from trip_place_selections where place_id=(select v from t_ids where k='P'))='selected', 'owner can select place');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000b');
+
 -- owner promotes Bob to editor; editor can now edit trip
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
 select pg_temp.expect((select name from trips where id=(select v from t_ids where k='A'))='Chiang Mai', 'member update ignored');
