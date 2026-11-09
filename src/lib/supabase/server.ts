@@ -1,6 +1,5 @@
 import "server-only";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { createServerClient } from "@supabase/ssr";
 import { publicEnv } from "@/lib/env";
 
@@ -22,11 +21,11 @@ export async function createClient() {
 }
 
 /** Returns the verified user (getUser hits Supabase Auth; never trust getSession on the server). */
-export async function requireUser(nextPath?: string) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function requireUser(_nextPath?: string) {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) {
-    redirect(nextPath ? `/login?next=${encodeURIComponent(nextPath)}` : "/login");
-  }
+  // middleware auto-signs-in the app account, so this only fails on misconfiguration
+  if (error || !data.user) throw new Error("Not signed in (check APP_USER_EMAIL / APP_USER_PASSWORD)");
   return { supabase, user: data.user };
 }

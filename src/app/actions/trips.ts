@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient, requireUser } from "@/lib/supabase/server";
+import { requireUser } from "@/lib/supabase/server";
 import { formDataToObject, tripInputSchema, uuidSchema } from "@/lib/validation/trip";
 import { normalizeInviteInput } from "@/lib/invite";
 import { dbErrorCode, zodFieldErrors, type ActionResult } from "./result";
@@ -69,10 +69,4 @@ export async function joinTripAction(_prev: ActionResult | null, fd: FormData): 
   if (error) return { ok: false, error: dbErrorCode(error) };
   revalidatePath("/trips");
   redirect(`/trips/${data}`);
-}
-
-export async function signOutAction() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
-  redirect("/login");
 }

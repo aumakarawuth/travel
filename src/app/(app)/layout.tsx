@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { Plane, UserRound, LogOut } from "lucide-react";
+import { Plane, UserRound } from "lucide-react";
 import { requireUser } from "@/lib/supabase/server";
 import { ThemeToggle } from "@/components/theme";
 import { Button } from "@/components/ui/button";
-import { signOutAction } from "@/app/actions/trips";
 import { getDict } from "@/i18n";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -20,9 +19,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <div className="flex items-center">
             <ThemeToggle />
             <Button variant="ghost" size="icon" asChild aria-label={t.nav.profile}><Link href="/profile"><UserRound /></Link></Button>
-            <form action={signOutAction}>
-              <Button variant="ghost" size="icon" aria-label={t.auth.signout}><LogOut /></Button>
-            </form>
           </div>
         </div>
       </header>
