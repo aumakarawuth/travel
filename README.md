@@ -12,7 +12,7 @@
 | 2 | URL submission, metadata, AI extraction, review | ✅ (รอตรวจ) |
 | 3 | Google Maps, dedupe, filters, voting | ✅ (รอตรวจ) |
 | 4 | Optimizer, itinerary, Maps links, hotels | ✅ (รอตรวจ) |
-| 5 | PWA, Share Target, offline | ⏳ |
+| 5 | PWA, Share Target, offline | ✅ (รอตรวจ) |
 | 6 | Hardening, E2E, deploy | ⏳ |
 
 
@@ -20,7 +20,7 @@
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — requirements, architecture, schema, API/jobs, env & cost, social-media risks
 - [docs/SETUP.md](docs/SETUP.md) — ติดตั้งและรันในเครื่อง
 - [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) — Deploy Supabase + Vercel
-- [docs/PHASE1.md](docs/PHASE1.md) / [docs/PHASE2.md](docs/PHASE2.md) / [docs/PHASE3.md](docs/PHASE3.md) / [docs/PHASE4.md](docs/PHASE4.md) — Acceptance criteria และวิธีทดสอบ
+- [docs/PHASE1.md](docs/PHASE1.md) / [docs/PHASE2.md](docs/PHASE2.md) / [docs/PHASE3.md](docs/PHASE3.md) / [docs/PHASE4.md](docs/PHASE4.md) / [docs/PHASE5.md](docs/PHASE5.md) — Acceptance criteria และวิธีทดสอบ
 
 ## Quick start
 ```bash

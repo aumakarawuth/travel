@@ -14,9 +14,9 @@ import type { Category } from "@/lib/ai/schema";
 export const metadata = { title: "Inbox" };
 export const maxDuration = 60; // link analysis runs in after() within this budget
 
-export default async function InboxPage({ params, searchParams }: { params: Promise<{ tripId: string }>; searchParams: Promise<{ url?: string }> }) {
+export default async function InboxPage({ params, searchParams }: { params: Promise<{ tripId: string }>; searchParams: Promise<{ url?: string; shared?: string }> }) {
   const { tripId } = await params;
-  const { url } = await searchParams;
+  const { url, shared } = await searchParams;
   const { supabase, user, trip } = await getTripContext(tripId);
   const { t, locale } = await getDict();
   const [items, places] = await Promise.all([loadSubmissions(supabase, trip.id, user.id), loadPlaces(supabase, trip.id)]);
@@ -26,7 +26,7 @@ export default async function InboxPage({ params, searchParams }: { params: Prom
       <RealtimeRefresh tripId={trip.id} tables={["link_submissions", "places"]} />
       <section className="space-y-4">
         <h1 className="text-xl font-bold">{t.inbox.title}</h1>
-        <LinkPaste tripId={trip.id} t={t.inbox} errors={t.errors} autoFocus={!items.length} initialUrl={url} />
+        <LinkPaste tripId={trip.id} t={t.inbox} errors={t.errors} autoFocus={!items.length} initialUrl={shared ?? url} autoSubmit={Boolean(shared)} />
         <SubmissionList items={items} tripId={trip.id} locale={locale}
           t={{ inbox: t.inbox, status: t.status, review: t.review, category: t.category, errors: t.errors, cancel: t.form.cancel }} />
       </section>

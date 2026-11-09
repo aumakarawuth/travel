@@ -43,6 +43,7 @@ export const en: Dict = {
   profile: { title: "Profile", color: "Colour", language: "Language" },
   phase: { soon: "Coming soon", soonBody: "This feature is planned for Phase {n} and not enabled yet" },
   inbox: {
+    offline: "You are offline — link analysis needs a connection",
     title: "Shared links", paste: "Paste a TikTok, IG, Google Maps, Agoda… link", add: "Add", note: "Note (optional), e.g. place name",
     added: "Link added — analyzing…", duplicate: "You already submitted this link", empty: "No links yet", emptyHint: "Paste a place link above; we'll find its name, category and location",
     all: "All", by: "by", review: "Review", retry: "Retry", delete: "Delete", deleteConfirm: "Delete this link? (Confirmed places stay)",
@@ -105,6 +106,11 @@ export const en: Dict = {
     checkIn: "Check-in", checkOut: "Check-out", price: "Price/night", rooms: "Rooms", proposed: "Proposed", confirmed: "Confirmed", confirm: "Confirm",
     unconfirm: "Unconfirm", delete: "Delete", noCoords: "No coordinates — not used as day start/end", empty: "No hotels yet", nights: "nights", ref: "Booking ref",
     hint: "The hotel of each night ends that day and starts the next (confirmed first)",
+  },
+  pwa: {
+    install: "Install app", offlineTitle: "Offline data", offlineBody: "Trip pages you open are stored on this device for offline reading (max 40 pages)",
+    clear: "Clear offline data", cleared: "Cleared", shareTitle: "Add shared link", chooseTrip: "Choose a trip for this link",
+    noUrl: "No link found in the shared content", noTrips: "No trips yet — create one first",
   },
   common: { loading: "Loading…", error: "Something went wrong", retry: "Retry", saved: "Saved", copied: "Copied", confirm: "Confirm", back: "Back", offline: "Offline" },
   errors: {

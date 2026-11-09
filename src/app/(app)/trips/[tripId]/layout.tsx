@@ -3,6 +3,7 @@ import { getDict } from "@/i18n";
 import { TripNav } from "@/components/trip-nav";
 import { TripSwitcher } from "@/components/trip-switcher";
 import { RealtimeRefresh } from "@/components/realtime-refresh";
+import { RememberTrip } from "@/components/pwa/remember-trip";
 import Link from "next/link";
 import { Settings } from "lucide-react";
 import { Badge } from "@/components/ui/misc";
@@ -27,6 +28,7 @@ export default async function TripLayout({ children, params }: { children: React
       </div>
       <TripNav tripId={trip.id} labels={{ home: t.nav.home, inbox: t.nav.inbox, map: t.nav.map, plan: t.nav.plan, members: t.nav.members }} />
       <RealtimeRefresh tripId={trip.id} tables={["trips", "trip_members"]} />
+      <RememberTrip tripId={trip.id} />
       <div className="container py-5">{children}</div>
     </div>
   );

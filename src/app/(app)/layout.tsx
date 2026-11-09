@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/supabase/server";
 import { ThemeToggle } from "@/components/theme";
 import { Button } from "@/components/ui/button";
 import { getDict } from "@/i18n";
+import { InstallButton } from "@/components/pwa/pwa";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   await requireUser();
@@ -17,6 +18,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <span>{t.app.name}</span>
           </Link>
           <div className="flex items-center">
+            <InstallButton label={t.pwa.install} />
             <ThemeToggle />
             <Button variant="ghost" size="icon" asChild aria-label={t.nav.profile}><Link href="/profile"><UserRound /></Link></Button>
           </div>
