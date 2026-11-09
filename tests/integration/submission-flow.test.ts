@@ -92,3 +92,37 @@ describe("link submission pipeline", () => {
     expect(db.ai_extraction_jobs[0].status).toBe("failed");
   });
 });
+
+describe("… → Map → Planner", () => {
+  it("confirmed places flow into a feasible plan with Google Maps route links", async () => {
+    const { buildDays, buildPlaces } = await import("@/lib/planner/build-input");
+    const { optimizePlan } = await import("@/lib/planner/optimize");
+    const { makeTravelFn } = await import("@/lib/planner/travel");
+    const { directionsSegments } = await import("@/lib/planner/links");
+    const { splitPinnable } = await import("@/lib/explore");
+    const { DEFAULT_SETTINGS } = await import("@/lib/planner/types");
+
+    const { client, db } = createFakeSupabase({ link_submissions: [sub("a", ALICE, "u1"), sub("b", BOB, "u2"), sub("c", ALICE, "u3")] });
+    const mk = (n: string, lat: number) => ({ name: n, category: "attraction" as const, lat, lng: 98.98, locationVerified: true, images: [], confidence: 1, evidence: [] });
+    await savePlaceForSubmission(client, ALICE, TRIP, "a", mk("Wat Phra Singh", 18.788));
+    await savePlaceForSubmission(client, BOB, TRIP, "b", mk("Doi Suthep", 18.805));
+    await savePlaceForSubmission(client, ALICE, TRIP, "c", { ...mk("Secret cafe", 0), lat: undefined, locationVerified: false });
+
+    // map step: unverified place is not pinned
+    const pins = splitPinnable(db.places.map((p: Record<string, unknown>) => ({ ...p, locationVerified: p.location_verified, votes: [], submitters: [], sourceUrls: [] })) as never);
+    expect(pins.pinned).toHaveLength(2);
+
+    // selection step: owner selects all three
+    const rows = db.places.map((p: Record<string, unknown>) => ({ ...p, selection: { status: "selected", priority: "normal", fixed_start_at: null, preferred_day: null } }));
+    const { places, noLocation } = buildPlaces(rows as never, []);
+    const { days } = buildDays({ start_date: "2026-12-01", end_date: "2026-12-01", daily_start_time: "09:00", daily_end_time: "18:00" }, [], new Set());
+    const plan = optimizePlan(places, days, makeTravelFn("car"), DEFAULT_SETTINGS, "estimate");
+
+    expect(plan.days[0].feasible).toBe(true);
+    expect(plan.days[0].stops.filter((s) => s.kind === "place")).toHaveLength(2);
+    expect(noLocation.map((n) => n.name)).toEqual(["Secret cafe"]);
+    expect(plan.routingSource).toBe("estimate");
+    const urls = directionsSegments(plan.days[0].stops.flatMap((s) => (s.kind === "place" ? [{ ...places.find((p) => p.id === s.placeId)!, placeId: null }] : [])), "car");
+    expect(urls[0]).toMatch(/^https:\/\/www\.google\.com\/maps\/dir\/\?api=1&origin=18\./);
+  });
+});

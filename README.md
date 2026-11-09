@@ -11,17 +11,16 @@
 | 1 | Architecture, DB schema + RLS, Auth, Trip CRUD, Invite/Roles, Realtime | ✅ เสร็จ (รอตรวจ) |
 | 2 | URL submission, metadata, AI extraction, review | ✅ (รอตรวจ) |
 | 3 | Google Maps, dedupe, filters, voting | ✅ (รอตรวจ) |
-| 4 | Optimizer, itinerary, Maps links, hotels | ⏳ |
+| 4 | Optimizer, itinerary, Maps links, hotels | ✅ (รอตรวจ) |
 | 5 | PWA, Share Target, offline | ⏳ |
 | 6 | Hardening, E2E, deploy | ⏳ |
 
-หน้า Inbox / Map / Plan แสดงข้อความ “กำลังพัฒนา (Phase n)” อย่างชัดเจน — ไม่มีข้อมูลปลอม
 
 ## เอกสาร
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — requirements, architecture, schema, API/jobs, env & cost, social-media risks
 - [docs/SETUP.md](docs/SETUP.md) — ติดตั้งและรันในเครื่อง
 - [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) — Deploy Supabase + Vercel
-- [docs/PHASE1.md](docs/PHASE1.md) / [docs/PHASE2.md](docs/PHASE2.md) / [docs/PHASE3.md](docs/PHASE3.md) — Acceptance criteria และวิธีทดสอบ
+- [docs/PHASE1.md](docs/PHASE1.md) / [docs/PHASE2.md](docs/PHASE2.md) / [docs/PHASE3.md](docs/PHASE3.md) / [docs/PHASE4.md](docs/PHASE4.md) — Acceptance criteria และวิธีทดสอบ
 
 ## Quick start
 ```bash

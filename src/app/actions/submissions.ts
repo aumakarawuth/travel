@@ -88,6 +88,7 @@ const reviewSchema = z.object({
   candidate: z.object({
     googlePlaceId: z.string().min(5).max(300), name: z.string().max(200), address: z.string().max(300).optional(),
     lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180), openingHours: z.array(z.string()).optional(),
+    openingPeriods: z.array(z.object({ open: z.object({ day: z.number(), hour: z.number(), minute: z.number() }), close: z.object({ day: z.number(), hour: z.number(), minute: z.number() }).optional() })).max(30).optional(),
   }).optional(),
   useExtractedLocation: z.boolean().default(false),
   visitMinutes: z.number().int().min(5).max(1440).optional(),
@@ -109,7 +110,7 @@ export async function confirmReviewAction(input: z.input<typeof reviewSchema>): 
     ({ lat, lng, googlePlaceId } = v.candidate);
     address = v.candidate.address ?? address;
     verified = true;
-    if (v.candidate.openingHours?.length) openingHours = { weekdayText: v.candidate.openingHours, source: "google_places", checkedAt: new Date().toISOString() };
+    if (v.candidate.openingHours?.length) openingHours = { weekdayText: v.candidate.openingHours, periods: v.candidate.openingPeriods ?? null, source: "google_places", checkedAt: new Date().toISOString() };
   } else if (v.useExtractedLocation && typeof ex.latitude === "number" && typeof ex.longitude === "number") {
     lat = ex.latitude; lng = ex.longitude; googlePlaceId = ex.googlePlaceId as string | undefined;
     verified = true; // user explicitly confirmed the evidence-derived pin

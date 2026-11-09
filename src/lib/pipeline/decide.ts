@@ -14,7 +14,7 @@ export type DecideInput = {
   ai: AiExtraction | null;
   aiProvider: string;
   isMock: boolean;
-  candidates: { googlePlaceId: string; name: string; address?: string; lat: number; lng: number; openingHours?: string[] }[];
+  candidates: { googlePlaceId: string; name: string; address?: string; lat: number; lng: number; openingHours?: string[]; openingPeriods?: unknown[] }[];
   placesChecked: boolean;
   now: Date;
 };
@@ -90,7 +90,7 @@ export function decide(i: DecideInput): ExtractionResult {
     currency: price?.currency,
     priceSource: price ? `${i.resolvedUrl} — "${price.quote}" (ตรวจ ${i.now.toISOString().slice(0, 10)})` : undefined,
     suggestedVisitDurationMinutes: ai?.suggestedVisitDurationMinutes,
-    openingHours: chosen?.openingHours ? { weekdayText: chosen.openingHours, source: "google_places", checkedAt: i.now.toISOString() } : undefined,
+    openingHours: chosen?.openingHours ? { weekdayText: chosen.openingHours, periods: chosen.openingPeriods ?? null, source: "google_places", checkedAt: i.now.toISOString() } : undefined,
     images: i.image ? [i.image] : [],
     sourceEvidence: i.evidence,
     confidenceScore: Math.round(confidence * 100) / 100,

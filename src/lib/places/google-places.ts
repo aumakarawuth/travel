@@ -3,7 +3,7 @@ import "server-only";
 export type PlaceCandidate = {
   googlePlaceId: string; name: string; address?: string; lat: number; lng: number;
   types: string[]; rating?: number; mapsUri?: string;
-  openingHours?: string[]; priceLevel?: string;
+  openingHours?: string[]; openingPeriods?: unknown[]; priceLevel?: string;
 };
 
 export function placesAvailable() {
@@ -20,7 +20,7 @@ export async function searchPlaces(query: string, bias?: { lat: number; lng: num
     headers: {
       "content-type": "application/json",
       "x-goog-api-key": key,
-      "x-goog-fieldmask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.googleMapsUri,places.regularOpeningHours.weekdayDescriptions,places.priceLevel",
+      "x-goog-fieldmask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.googleMapsUri,places.regularOpeningHours.weekdayDescriptions,places.regularOpeningHours.periods,places.priceLevel",
     },
     body: JSON.stringify({
       textQuery: query.slice(0, 200), languageCode: "th", regionCode: "TH", pageSize: 5,
@@ -32,6 +32,6 @@ export async function searchPlaces(query: string, bias?: { lat: number; lng: num
   return (j.places ?? []).map((p: Record<string, any>) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
     googlePlaceId: p.id, name: p.displayName?.text ?? "", address: p.formattedAddress,
     lat: p.location?.latitude, lng: p.location?.longitude, types: p.types ?? [], rating: p.rating,
-    mapsUri: p.googleMapsUri, openingHours: p.regularOpeningHours?.weekdayDescriptions, priceLevel: p.priceLevel,
+    mapsUri: p.googleMapsUri, openingHours: p.regularOpeningHours?.weekdayDescriptions, openingPeriods: p.regularOpeningHours?.periods, priceLevel: p.priceLevel,
   })).filter((c: PlaceCandidate) => c.googlePlaceId && Number.isFinite(c.lat) && Number.isFinite(c.lng));
 }

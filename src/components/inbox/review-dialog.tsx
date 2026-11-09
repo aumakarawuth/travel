@@ -44,7 +44,7 @@ export function ReviewDialog({ submission: s, t, trigger }: { submission: Submis
     const r = await confirmReviewAction({
       submissionId: s.id, name, category, description: description || undefined, address: address || undefined,
       visitMinutes: visit ? Number(visit) : undefined,
-      candidate: pin.kind === "candidate" ? { googlePlaceId: pin.c.googlePlaceId, name: pin.c.name, address: pin.c.address, lat: pin.c.lat, lng: pin.c.lng, openingHours: pin.c.openingHours } : undefined,
+      candidate: pin.kind === "candidate" ? { googlePlaceId: pin.c.googlePlaceId, name: pin.c.name, address: pin.c.address, lat: pin.c.lat, lng: pin.c.lng, openingHours: pin.c.openingHours, openingPeriods: pin.c.openingPeriods as never } : undefined,
       useExtractedLocation: pin.kind === "link",
     });
     if (!r.ok) return void toast.error((t.errors as Record<string, string>)[r.error] ?? t.errors.generic);
