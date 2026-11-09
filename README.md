@@ -9,7 +9,7 @@
 | Phase | ขอบเขต | สถานะ |
 |---|---|---|
 | 1 | Architecture, DB schema + RLS, Auth, Trip CRUD, Invite/Roles, Realtime | ✅ เสร็จ (รอตรวจ) |
-| 2 | URL submission, metadata, AI extraction, review | ⏳ |
+| 2 | URL submission, metadata, AI extraction, review | ✅ (รอตรวจ) |
 | 3 | Google Maps, dedupe, filters, voting | ⏳ |
 | 4 | Optimizer, itinerary, Maps links, hotels | ⏳ |
 | 5 | PWA, Share Target, offline | ⏳ |
@@ -21,7 +21,7 @@
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — requirements, architecture, schema, API/jobs, env & cost, social-media risks
 - [docs/SETUP.md](docs/SETUP.md) — ติดตั้งและรันในเครื่อง
 - [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) — Deploy Supabase + Vercel
-- [docs/PHASE1.md](docs/PHASE1.md) — Acceptance criteria และวิธีทดสอบ Phase 1
+- [docs/PHASE1.md](docs/PHASE1.md) / [docs/PHASE2.md](docs/PHASE2.md) — Acceptance criteria และวิธีทดสอบ
 
 ## Quick start
 ```bash

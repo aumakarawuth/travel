@@ -43,12 +43,36 @@ export const th = {
   },
   profile: { title: "โปรไฟล์", color: "สีประจำตัว", language: "ภาษา" },
   phase: { soon: "กำลังพัฒนา", soonBody: "ฟีเจอร์นี้อยู่ในแผน Phase {n} ยังไม่เปิดใช้งาน" },
+  inbox: {
+    title: "ลิงก์ที่แชร์", paste: "วางลิงก์ TikTok, IG, Google Maps, Agoda…", add: "เพิ่ม", note: "หมายเหตุ (ไม่บังคับ) เช่น ชื่อร้าน",
+    added: "เพิ่มลิงก์แล้ว กำลังวิเคราะห์…", duplicate: "คุณเคยส่งลิงก์นี้แล้ว", empty: "ยังไม่มีลิงก์", emptyHint: "วางลิงก์สถานที่ที่อยากไปด้านบน ระบบจะช่วยหาชื่อ หมวดหมู่ และตำแหน่ง",
+    all: "ทั้งหมด", by: "โดย", review: "ตรวจสอบ", retry: "ลองใหม่", delete: "ลบ", deleteConfirm: "ลบลิงก์นี้? (สถานที่ที่ยืนยันแล้วจะยังอยู่)",
+    open: "เปิดลิงก์", places: "สถานที่", noPlaces: "ยังไม่มีสถานที่ที่ยืนยัน", submitters: "ผู้เสนอ", noLocation: "ยังไม่มีพิกัด",
+    verified: "ยืนยันพิกัดแล้ว", mock: "MOCK — ยังไม่ได้ต่อ AI จริง", restricted: "แพลตฟอร์มนี้มักบล็อกการอ่านข้อมูล กรุณากรอกชื่อสถานที่เอง",
+    fetchFailed: "ดึงข้อมูลจากลิงก์ไม่ได้", missing: "ข้อมูลที่ขาด", confidence: "ความมั่นใจ", provider: "ตัววิเคราะห์",
+  },
+  status: { pending: "รอคิว", analyzing: "กำลังวิเคราะห์", needs_review: "รอตรวจสอบ", completed: "เสร็จแล้ว", failed: "ล้มเหลว" },
+  review: {
+    title: "ตรวจสอบสถานที่", name: "ชื่อสถานที่", category: "หมวดหมู่", description: "รายละเอียด", address: "ที่อยู่",
+    search: "ค้นหาใน Google Places", searchPh: "พิมพ์ชื่อสถานที่", searching: "กำลังค้นหา…", noResults: "ไม่พบผลลัพธ์",
+    placesOff: "ยังไม่ได้ตั้งค่า Google Places API — บันทึกได้แต่จะยังไม่ปักหมุด", pick: "เลือกสถานที่ที่ถูกต้อง",
+    useLinkLocation: "ใช้พิกัดจากลิงก์", noPin: "ไม่ปักหมุด (ไว้เลือกภายหลัง)", confirm: "ยืนยันสถานที่", confirmed: "บันทึกสถานที่แล้ว",
+    merged: "รวมกับสถานที่เดิมที่มีคนเสนอไว้แล้ว", evidence: "หลักฐานจากลิงก์", visit: "เวลาเที่ยวโดยประมาณ (นาที)",
+  },
+  category: {
+    attraction: "สถานที่ท่องเที่ยว", cafe: "คาเฟ่", restaurant: "ร้านอาหาร", accommodation: "ที่พัก", activity: "กิจกรรม/ผจญภัย",
+    nature: "ธรรมชาติ", shopping: "ช้อปปิ้ง", nightlife: "ไนท์ไลฟ์", viewpoint: "จุดชมวิว", transportation: "การเดินทาง/EV", other: "อื่น ๆ",
+  },
+  place: { sources: "แหล่งที่มา", submittedBy: "เสนอโดย", price: "ราคาประมาณ", hours: "เวลาเปิดทำการ", source: "ที่มา", checked: "ตรวจเมื่อ", openMaps: "เปิดใน Google Maps", back: "กลับไปหน้าลิงก์" },
   common: { loading: "กำลังโหลด…", error: "เกิดข้อผิดพลาด", retry: "ลองใหม่", saved: "บันทึกแล้ว", copied: "คัดลอกแล้ว", confirm: "ยืนยัน", back: "กลับ", offline: "ออฟไลน์" },
   errors: {
     required: "จำเป็นต้องกรอก", end_before_start: "วันสุดท้ายต้องไม่ก่อนวันเริ่ม", trip_too_long: "ทริปยาวได้สูงสุด 61 วัน",
     end_time_before_start: "เวลาเลิกต้องหลังเวลาเริ่ม", invalid_invite: "โค้ดเชิญไม่ถูกต้อง", forbidden: "คุณไม่มีสิทธิ์ทำรายการนี้",
     rate_limited: "ทำรายการถี่เกินไป กรุณาลองใหม่ภายหลัง", generic: "เกิดข้อผิดพลาด กรุณาลองใหม่", trip_full: "ทริปนี้มีสมาชิกเต็มแล้ว",
     invite_email_mismatch: "คำเชิญนี้ออกให้อีเมลอื่น",
+    url_empty: "กรุณาวางลิงก์", url_invalid: "ลิงก์ไม่ถูกต้อง", url_protocol: "รองรับเฉพาะ http/https", url_credentials: "ลิงก์ต้องไม่มีชื่อผู้ใช้/รหัสผ่าน",
+    url_port: "ไม่รองรับพอร์ตนี้", url_host: "โดเมนนี้ไม่อนุญาต", url_too_long: "ลิงก์ยาวเกินไป", validation: "ข้อมูลไม่ถูกต้อง",
+    blocked_unsafe_url: "ลิงก์นี้ชี้ไปยังที่อยู่ที่ไม่ปลอดภัย ระบบจึงไม่เปิด", timeout: "เว็บปลายทางตอบช้าเกินไป", http_error: "เว็บปลายทางตอบกลับด้วยข้อผิดพลาด", network: "เชื่อมต่อเว็บปลายทางไม่ได้", too_many_redirects: "ลิงก์ redirect มากเกินไป",
   },
 } as const;
 

@@ -2,9 +2,12 @@ import Link from "next/link";
 import { CalendarDays, Clock, Wallet, Route, Link2, Users } from "lucide-react";
 import { getTripContext } from "@/lib/trip-data";
 import { getDict } from "@/i18n";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/misc";
 import { formatDateRange, formatMoney } from "@/lib/utils";
+import { LinkPaste } from "@/components/inbox/link-paste";
+
+export const maxDuration = 60;
 
 export default async function TripOverview({ params }: { params: Promise<{ tripId: string }> }) {
   const { tripId } = await params;
@@ -18,12 +21,14 @@ export default async function TripOverview({ params }: { params: Promise<{ tripI
   ];
   return (
     <div className="space-y-5">
-      {/* quick add — wired up in Phase 2 */}
       <Card className="border-primary/30 bg-accent/40">
-        <CardHeader>
+        <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2"><Link2 className="h-5 w-5 text-primary" />{t.overview.quickAdd}</CardTitle>
-          <CardDescription>{t.overview.quickAddSoon}</CardDescription>
         </CardHeader>
+        <CardContent>
+          <LinkPaste tripId={trip.id} t={t.inbox} errors={t.errors} />
+          <Link href={`/trips/${trip.id}/inbox`} className="mt-3 inline-block text-sm font-medium text-primary">{t.inbox.title} →</Link>
+        </CardContent>
       </Card>
 
       <div className="grid gap-3 sm:grid-cols-2">
